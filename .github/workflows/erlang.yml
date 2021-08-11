@@ -20,4 +20,6 @@ jobs:
     - name: Compile
       run:  make all dialyze
     - name: Run tests
+      run:  which epmd
+      run:  epmd -daemon
       run:  make eunit
