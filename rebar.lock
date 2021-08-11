@@ -1,0 +1,4 @@
+[{<<"util">>,
+  {git,"https://github.com/saleyn/util.git",
+       {ref,"7bab567c57ea3ecbc2a570705537438af266aab2"}},
+  0}].

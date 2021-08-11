@@ -2,8 +2,12 @@
 *.o
 *.beam
 *.plt
+*.backup
 erl_crash.dump
 .concrete/DEV_MODE
+
+install
+doc
 
 # rebar 2.x
 .rebar

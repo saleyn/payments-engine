@@ -1,0 +1,12 @@
+{application, payments,
+   [{description, "Payments Engine"},
+    {vsn,         "0.1.0"},
+    {id,          "payments"},
+    {modules,     [payments_engine]},
+    {registered,  [payments_engine]},
+    {applications,[kernel,stdlib]},
+    {mod,         {payments_app,[]}},
+    {env,         []},
+    {maintainers, ["Serge Aleynikov"]},
+    {licenses,    ["BSD"]},
+    {links,       [{"Github","https://github.com/saleyn/payments-engine"}]}]}.
