@@ -21,41 +21,13 @@ main([]) ->
   usage();
 main(Args) ->
   try
-    %% (1) Parse and validate arguments
-    #args{pretty=PrettyPrint, reccount=ShowCount, file=File, audit=Audit} = parse(Args, #args{}),
+    %% (1) Parse arguments
 
-    IsAudit = Audit /= undefined,
+    ParsedArgs = parse(Args, #args{}),
 
-    if not IsAudit ->
-      File == []
-        andalso throw("Missing required CSVFile argument!"),
+    %% (2) Validate arguments and run the action
 
-      filelib:is_regular(File)
-        orelse throw({nostack, "File " ++ File ++ " not found!"});
-    true ->
-      ok
-    end,
-
-    AbsFile = filename:absname(File),
-
-    %% (2) Connect to the local payments engine
-    {ok, Host} = inet:gethostname(),
-    Node = list_to_atom("payments@" ++ Host),
-
-    case net_kernel:connect_node(Node) of
-      true  -> ok;
-      false -> throw({nostack, "Payments engine not running!"})
-    end,
-
-    %% (3) Add local path to the payments module
-    add_paths(),
-
-    %% (4) Perform the requested action
-    if IsAudit ->
-      print_audit(Node, Audit);
-    true ->
-      process_file(Node, AbsFile, PrettyPrint, ShowCount)
-    end
+    action(ParsedArgs)
   catch
     _:{nostack, Err} ->
       io:format(standard_error, "Error: ~s\n", [Err]);
@@ -66,6 +38,32 @@ main(Args) ->
 %%%-----------------------------------------------------------------------------
 %%% Internal functions
 %%%-----------------------------------------------------------------------------
+
+action(#args{audit = Audit}) when is_integer(Audit); Audit == all ->
+  Node = configure(),
+  print_audit(Node, Audit);
+
+action(#args{pretty=PrettyPrint, reccount=ShowCount, file=File}) ->
+  File == []
+    andalso throw("Missing required CSVFile argument!"),
+  filelib:is_regular(File)
+    orelse throw({nostack, "File " ++ File ++ " not found!"}),
+
+  Node = configure(),
+  process_file(Node, File, PrettyPrint, ShowCount).
+
+configure() ->
+  %% Connect to the local payments engine
+  {ok, Host} = inet:gethostname(),
+  Node = list_to_atom("payments@" ++ Host),
+
+  net_kernel:connect_node(Node)
+    orelse throw({nostack, "Payments engine not running!"}),
+
+  %% Add local path to the payments module
+  add_paths(),
+  Node.
+
 print_audit(Node, Audit) ->
   F = fun
         G({Recs, '$end_of_table'}, PrintHeader) ->
@@ -74,7 +72,6 @@ print_audit(Node, Audit) ->
           payments:print_audit(Recs, PrintHeader),
           G(erpc:call(Node, payments_engine, audit, [Cont]), false)
       end,
-
   F(erpc:call(Node, payments_engine, audit, [Audit, []]), true).
 
 process_file(Node, AbsFile, PrettyPrint, ShowCount) ->
@@ -82,11 +79,11 @@ process_file(Node, AbsFile, PrettyPrint, ShowCount) ->
   case erpc:call(Node, payments, process_file, [AbsFile]) of
     {ok, Success, 0} ->
       ShowCount andalso
-        io:format("Result:  ~w records loaded\n\n", [Success]);
+        io:format("Loaded: ~w records\n\n", [Success]);
     {ok, Success, Failed} ->
       ShowCount andalso
-        io:format("Result:  ~w records loaded successfully\n"
-                  "         ~w records failed\n\n", [Success, Failed]);
+        io:format("Loaded: ~w records\n"
+                  "Failed: ~w records\n\n", [Success, Failed]);
     Other ->
       io:format("Error: ~p\n", [Other]),
       erlang:halt(1)
@@ -114,7 +111,7 @@ usage() ->
 
 parse(["-p"     | T], A)                   -> parse(T, A#args{pretty   = true});
 parse(["-n"     | T], A)                   -> parse(T, A#args{reccount = true});
-parse([F        | T], A) when hd(F) /= $-  -> parse(T, A#args{file     = F   });
+parse([F        | T], A) when hd(F) /= $-  -> parse(T, A#args{file     = filename:absname(F)});
 parse(["-a", ID | T], A) when hd(ID)/= $-  -> parse(T, A#args{audit    = list_to_integer(ID)});
 parse(["-a"     | T], A)                   -> parse(T, A#args{audit    = all });
 parse(["-h"     | _], _)                   -> usage();

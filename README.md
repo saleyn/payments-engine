@@ -206,7 +206,7 @@ Options:
   -h|--help  - print help
 
 $ install/bin/payments-loader.es -p -n test/data/transactions.csv
-Result:  0 records loaded
+Loaded: 0 records
 
 Client | Available |  Held  |  Total  | Locked
 -------+-----------+--------+---------+-------
