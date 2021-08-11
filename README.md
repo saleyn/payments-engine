@@ -158,7 +158,8 @@ pong
 ```
 
 Loading transactions from a file can be done either in the interactive mode by calling
-`payments:process_file/1`, or via a loader script.  For the later, execute the
+`payments:process_file/1`, or via a loader script.  For the later, execute the script
+by giving it the file with transactions:
 ```
 $ install/bin/payments-loader.es test/data/transactions.csv
 client,available,held,total,locked
@@ -166,7 +167,8 @@ client,available,held,total,locked
 2,-1.0000,0.0000,-1.0000,false
 ```
 
-Note that the script takes two optional arguments:
+Note that the script takes two optional arguments for pretty printing and outputing
+the record counts:
 ```
 $ install/bin/payments-loader.es -h
 Load payment transactions from a file
