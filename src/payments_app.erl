@@ -137,7 +137,8 @@ check_schema() ->
 
 create_table(Tab, Attrs) ->
   try
-    mnesia:table_info(Tab, record_name)
+    mnesia:table_info(Tab, record_name),
+    wait_for_table(Tab)
   catch _:{aborted,{no_exists,Tab,_}} ->
     case mnesia:create_table(Tab, Attrs) of
       {atomic, ok} ->
@@ -147,4 +148,15 @@ create_table(Tab, Attrs) ->
       {aborted, Why} ->
         throw({error_creating_table, Tab, Why})
     end
+  end.
+
+wait_for_table(Tab) ->
+  case mnesia:wait_for_tables([Tab], 60000) of
+    ok ->
+      ok;
+    {timeout, [Tab]} ->
+      ?LOG_WARNING("Timeout waiting for table ~w", [Tab]),
+      wait_for_table(Tab);
+    {error, Reason} ->
+      throw(?FMT("Error waiting for table ~w: ~p", [Tab, Reason]))
   end.
