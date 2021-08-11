@@ -1,5 +1,7 @@
 # Sample Payments Engine
 
+[![build](https://github.com/saleyn/payments-engine/actions/workflows/erlang.yml/badge.svg)](https://github.com/saleyn/payments-engine/actions/workflows/erlang.yml)
+
 A payments engine that reads in a series of transactions from a CSV, updates individual client
 accounts, handles disputes, chargebacks and resolutions, and then outputs the state of client
 accounts as a CSV.
