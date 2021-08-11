@@ -181,6 +181,7 @@ Usage: install/bin/payments-loader.es [-p] [-n] [-h|--help] CSVFile
 Options:
   -p         - pretty print
   -n         - show number of records loaded/failed
+  -a [CliID] - print audit log (optionally filter by ClientID)
   -h|--help  - print help
 
 $ install/bin/payments-loader.es -p -n test/data/transactions.csv
@@ -195,6 +196,14 @@ Client | Available |  Held  |  Total  | Locked
 
 Note that in this second execution `0` records were loaded because
 all of them are duplicates.
+
+The system maintains an audit trail log of all client asset changes.
+To view that log, execute the `payments-loader.es` with `-a` option:
+```
+$ install/bin/payments-loader.es -a 5
+               Time |  ClientID |   TransID |       Type |       Amount |     OldAvail->NewAvail     |      OldHeld->NewHeld      |     NewTotal |  Lock
+2021-08-10 19:00:00 |         5 |       100 |    deposit |       5.0000 |       0.0000->5.0000       |       0.0000->0.0000       |       5.0000 | false
+```
 
 ## Assumptions
 

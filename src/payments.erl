@@ -12,6 +12,7 @@
 %% External API
 -export([process_file/1, assets/0, assets/1, client_asset/1]).
 -export([print_assets/0, print_assets/1, print_assets/2]).
+-export([format_audit/1, print_audit/1, print_audit/2]).
 
 %% Internal API
 -export([parse_file/1]).
@@ -274,6 +275,36 @@ format_rows(Data) ->
           R
       end,
       Data).
+
+-spec print_audit([#audit{}]) -> ok.
+print_audit(Audit) when is_list(Audit) ->
+  print_audit(Audit, true).
+
+-spec print_audit([#audit{}], boolean()) -> ok.
+print_audit(Audit, PrintHeader) when is_list(Audit), is_boolean(PrintHeader) ->
+  PrintHeader andalso
+    io:format("~19s | ~9s | ~9s | ~10s | ~12s | ~12s->~-12s | ~12s->~-12s | ~12s | ~5s\n",
+              ["Time", "ClientID", "TransID", "Type", "Amount", "OldAvail", "NewAvail",
+               "OldHeld", "NewHeld", "NewTotal", "Lock"]),
+  lists:foreach(fun(R) -> io:put_chars(format_audit(R)) end, Audit).
+
+-spec format_audit(#audit{}) -> string().
+format_audit(#audit{key={CliID,TS}, id=TxID, type=Type, amount=Amt,
+                    old_avail=OA, new_avail=NA, old_held=OH, new_held=NH,
+                    lock=Lock}) ->
+  io_lib:format("~s | ~9w | ~9w | ~10w | ~12.4f | ~12.4f->~-12.4f | ~12.4f->~-12.4f | ~12.4f | ~5w\n",
+                [time_to_str(TS), CliID, TxID, Type, fv(Amt), OA, NA, OH, NH, NA+NH, Lock]).
+
+fv(A)  when is_float(A) -> A;
+fv(_)                   -> 0.0.
+
+i2l(I) when I < 10      -> [$0, $0+I];
+i2l(I)                  -> integer_to_list(I).
+
+time_to_str(USec) ->
+  {{Y,Mo,D},{H,M,S}} = calendar:system_time_to_local_time(USec, microsecond),
+  lists:flatten([integer_to_list(Y), $-, i2l(Mo), $-, i2l(D), $ ,
+                 i2l(H),$:,i2l(M),$:,i2l(S)]).
 
 %%%-----------------------------------------------------------------------------
 %%% Tests

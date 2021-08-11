@@ -98,7 +98,7 @@ audit(Cont) when tuple_size(Cont)=:=10
                , element(2,Cont) == audit ->
   mnesia:async_dirty(fun() -> mnesia:select(Cont) end);
 audit('$end_of_table') ->
-  '$end_of_table'.
+  {[], '$end_of_table'}.
 
 -spec audit() -> {Records::list(), Continuation::tuple()|'$end_of_table'}.
 audit() ->
