@@ -40,7 +40,7 @@ payments_test_() ->
      %% Load records with bad data
      ?_assertEqual({ok, 3, 2}, payments:process_file("test/data/bad-data.csv")),
      %% Test disputes
-     ?_assertEqual({ok, 7, 2}, payments:process_file("test/data/resolve.csv")),
+     ?_assertEqual({ok, 7, 1}, payments:process_file("test/data/resolve.csv")),
 
      %% Deposits/Withdrawals
      ?_assertEqual({ok, 1},
