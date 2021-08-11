@@ -48,8 +48,21 @@ The project uses a `csv` and `stringx` modules in an external
 [util library](https://github.com/saleyn/util.git) for CSV parsing and pretty printing.
 They are automatically pulled and built by the project.
 
-## Building the project
+## Installing the project from a release
 
+Obtain the latest release from [here](https://github.com/saleyn/payments-engine/releases).
+Untar the file to the installation directory, and it's ready to run via the scripts in the
+`bin` directory discussed in the following sections.
+
+```
+$ mkdir payments
+$ cd payments
+$ tar zxf payments-0.1.tar.gz
+```
+
+## Building the project from sources
+
+The alternative to downloading a prebuilt release is to build it from sources.
 The commands below will pull the project and build a release in the `install` directory:
 ```
 $ git clone https://github.com/saleyn/payments-engine.git
@@ -61,7 +74,7 @@ $ make release
 ```
 .
 ├── _build                              # Build artifacts (generated)
-├── bin
+├── bin                                 # Source directory for scripts
 ├── etc
 │   ├── sys.config                      # System configuration
 │   └── vm.args                         # Erlang VM arguments
