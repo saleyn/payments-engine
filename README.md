@@ -68,8 +68,9 @@ $ make release
 ├── README.md
 ├── rebar.config                        # Build configuration
 ├── rebar.lock                          # Dependency versions lock
-├── install                             # Installation folder (generated)
+├── install                             # Installation root folder (generated)
 │   ├── bin
+│   │   ├── payments-loader.es          # Payment transactions loading script
 │   │   └── payments                    # System startup / management script
 │   ├── lib
 │   │   ├── payments-0.1.0              # Bytecode of the payments engine
