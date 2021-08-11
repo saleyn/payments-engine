@@ -33,15 +33,15 @@
 
 %% Client transaction audit record
 -record(audit, {
-  key  :: {integer(), integer()},         %% {ClientID, TransactionTimestamp}
-  id                    :: integer(),     %% Transaction ID (FK to the transaction table)
+  key :: {'_'|integer(), '$1'|integer()}, %% {ClientID, TransactionTimestamp}
+  id                    :: '_'|integer(), %% Transaction ID (FK to the transaction table)
   type                                    %% Transaction Type
-       :: deposit|withdrawal|dispute|chargeback|resolve,
-  amount        = 0.0   :: float(),       %% Amount
-  old_avail     = 0.0   :: float(),       %% Old available balance
-  new_avail     = 0.0   :: float(),       %% New available balance
-  old_held      = 0.0   :: float(),       %% Old held balance
-  new_held      = 0.0   :: float(),       %% New held balance
-  lock          = false :: boolean(),     %% Account lock status
-  created               :: integer()      %% Timestamp when transaction was inserted (usec from Epoch)
+      :: '_'|deposit|withdrawal|dispute|chargeback|resolve,
+  amount        = 0.0   :: '_'|float(),   %% Amount
+  old_avail     = 0.0   :: '_'|float(),   %% Old available balance
+  new_avail     = 0.0   :: '_'|float(),   %% New available balance
+  old_held      = 0.0   :: '_'|float(),   %% Old held balance
+  new_held      = 0.0   :: '_'|float(),   %% New held balance
+  lock          = false :: '_'|boolean(), %% Account lock status
+  created               :: '_'|integer()  %% Timestamp when transaction was inserted (usec from Epoch)
 }).

@@ -11,7 +11,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, process/1, assets/0, assets/1]).
+-export([start_link/0, process/1, assets/0, assets/1, audit/2, audit/1, audit/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
@@ -52,6 +52,57 @@ assets(ClientID) when is_integer(ClientID) ->
     []  -> not_found;
     [R] -> R
   end.
+
+%%-----------------------------------------------------------------------------
+%% @doc Get audit records for a given ClientID and optionally a time range.
+%%      The time is specified in the `Options' in microseconds since Epoch.
+%%      The return is the tuple of records and a continuation. To get the next
+%%      batch of records (when the `limit' option limits the number of objects
+%%      returned), call `audit/1'.
+%% @end
+%%-----------------------------------------------------------------------------
+-spec audit(all|integer(), [{start_time,integer()}|{end_time,integer()}|{limit,integer()}]) ->
+        {Records::list(), Continuation::tuple()|'$end_of_table'}.
+audit(ClientID, Options) when (is_integer(ClientID) orelse ClientID==all), is_list(Options) ->
+  FromTime = case proplists:get_value(start_time, Options) of
+               undefined                   -> [];
+               N when is_integer(N), N > 0 -> [{'>=','$1',N}];
+               N                           -> throw({invalid_start_time, N})
+             end,
+  EndTime  = case proplists:get_value(end_time, Options) of
+               undefined                   -> [];
+               M when is_integer(M), M > 0 -> [{'=<','$1',M}];
+               M                           -> throw({invalid_end_time, M})
+             end,
+  Cli      = if ClientID == all -> '_'; true -> ClientID end,
+  Limit    = proplists:get_value(limit, Options, infinity),
+  MatchSpec= [{#audit{key = {Cli,'$1'}, _='_'}, FromTime++EndTime, ['$_']}],
+  case Limit of
+    infinity ->
+      {mnesia:dirty_select(audit, MatchSpec), '$end_of_table'};
+    _ ->
+      mnesia:async_dirty(fun() -> mnesia:select(audit, MatchSpec, Limit, read) end)
+  end.
+
+%%-----------------------------------------------------------------------------
+%% @doc Get audit records for a given ClientID or a continuation of the prior
+%%      `audit/2' call.
+%% @end
+%%-----------------------------------------------------------------------------
+-spec audit(integer()|Continuation::tuple()|'$end_of_table') ->
+        {Records::list(), Continuation::tuple()|'$end_of_table'}.
+audit(ClientID) when is_integer(ClientID) ->
+  audit(ClientID, []);
+audit(Cont) when tuple_size(Cont)=:=10
+               , element(1,Cont) == mnesia_select
+               , element(2,Cont) == audit ->
+  mnesia:async_dirty(fun() -> mnesia:select(Cont) end);
+audit('$end_of_table') ->
+  '$end_of_table'.
+
+-spec audit() -> {Records::list(), Continuation::tuple()|'$end_of_table'}.
+audit() ->
+  audit(all, []).
 
 %%%----------------------------------------------------------------------------
 %%% Callback functions from gen_server

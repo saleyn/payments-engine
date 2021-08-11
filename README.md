@@ -32,6 +32,10 @@ to the daemon process.
 - [Rebar3](https://github.com/erlang/rebar3)
   The system needs to have a local installation of `rebar3`:
 ```
+# For Arch Linux:
+$ sudo pacman -S rebar3
+
+# For others:
 $ git clone https://github.com/erlang/rebar3.git
 $ cd rebar3
 $ ./bootstrap

@@ -4,11 +4,14 @@ APP_ROOT ?= /tmp/$(env)
 
 all: deps compile
 
-compile clean:
-	@APP_ROOT=$(ROOT) $(REBAR) $@
+compile dialyzer:
+	@# The sed removes remaining colors, or else vim doesn't figure out the error location properly
+	@REBAR_COLOR=none APP_ROOT=$(ROOT) $(REBAR) $@ | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"
 
-dialyze:
-	@$(REBAR) dialyzer
+clean:
+	@$(REBAR) $@
+
+dialyze: dialyzer
 
 deps:
 	@$(REBAR) get-deps
