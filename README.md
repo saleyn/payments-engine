@@ -48,11 +48,11 @@ The project uses a `csv` and `stringx` modules in an external
 [util library](https://github.com/saleyn/util.git) for CSV parsing and pretty printing.
 They are automatically pulled and built by the project.
 
-## Installing the project from a release
+### Installing the project from a binary release
 
-Obtain the latest release from [here](https://github.com/saleyn/payments-engine/releases).
-Untar the file to the installation directory, and it's ready to run via the scripts in the
-`bin` directory discussed in the following sections.
+Obtain the latest release tarball from [here](https://github.com/saleyn/payments-engine/releases).
+Untar the `*.tar.gz` file to the installation directory, and it's ready to run via the scripts
+in the `bin` directory discussed in the following sections.
 
 ```
 $ mkdir payments
@@ -60,7 +60,7 @@ $ cd payments
 $ tar zxf payments-0.1.tar.gz
 ```
 
-## Building the project from sources
+### Building the project from sources
 
 The alternative to downloading a prebuilt release is to build it from sources.
 The commands below will pull the project and build a release in the `install` directory:
@@ -98,7 +98,7 @@ $ make release
 │   ├── payments_app.erl                # Application startup logic
 │   ├── payments.app.src                # Application metadata
 │   └── payments_engine.erl             # Payments core engine
-└── test
+└── test                                # Source directory of test cases
     └── data
         └── transactions.csv            # Test data
 ```

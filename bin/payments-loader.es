@@ -100,7 +100,7 @@ process_file(Node, AbsFile, PrettyPrint, ShowCount) ->
 usage() ->
   io:format(standard_error,
             "Load payment transactions from a file\n"
-            "Usage: ~s [-p] [-n] [-h|--help] CSVFile\n\n"
+            "Usage: ~s Options [CSVFile]\n\n"
             "Options:\n"
             "  -p         - pretty print\n"
             "  -n         - show number of records loaded/failed\n"
