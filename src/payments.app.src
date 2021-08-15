@@ -1,6 +1,6 @@
 {application, payments,
    [{description, "Payments Engine"},
-    {vsn,         "0.1.0"},
+    {vsn,         "0.1"},
     {id,          "payments"},
     {modules,     [payments_engine]},
     {registered,  [payments_engine]},

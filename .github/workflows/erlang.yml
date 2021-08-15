@@ -24,3 +24,9 @@ jobs:
             which epmd
             epmd -daemon
             make eunit
+    - name: Create github release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: rinseweb.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

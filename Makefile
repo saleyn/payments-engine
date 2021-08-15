@@ -1,12 +1,15 @@
 REBAR     = rebar3
 env  		 ?= test
 APP_ROOT ?= /tmp/$(env)
+PROJECT   = $(shell sed -n '/application/{s/^.*{application, *\([^,]\+\),.*$$/\1/p; q}' $(wildcard src/*.app.src))
+VSN       = $(shell sed -n '/{payments, *"/{s/^.*payments, *"\([^\"]\+\)".*$$/\1/p}' rebar.config)
 
 all: deps compile
 
 compile dialyzer:
-	@# The sed removes remaining colors, or else vim doesn't figure out the error location properly
-	@REBAR_COLOR=none APP_ROOT=$(ROOT) $(REBAR) $@ | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"
+	@# The TERM=dumb removes bold colors, or else vim doesn't figure out the error location properly
+	@#TERM=dumb APP_ROOT=$(ROOT) $(REBAR) $@
+	@APP_ROOT=$(ROOT) $(REBAR) $@
 
 clean:
 	@$(REBAR) $@
@@ -22,30 +25,36 @@ test eunit: dialyze
 docs:
 	@$(REBAR) edoc
 
-release: VER=$(shell erl -eval '{ok, B} = file:consult("rebar.config"),\
-			                          {release,{payments,V}, _} = lists:keyfind(release, 1, proplists:get_value(relx, B)),\
-												        io:format("~s\n", [V]), halt(0).' -noinput)
+vsn:
+	@echo "Version: $(VSN)"
+
+set-version:
+	@[ -z $(version) ] && echo "Missing version=X.Y.Z!" && exit 1 || true
+	@sed -i 's/{$(PROJECT),\( \+\)"[[:digit:]]\+\(\.[[:digit:]]\+\)\{1,\}"}/{$(PROJECT),\1"$(version)"}/' rebar.config
+	@sed -i 's/{vsn,\( \+\)"[[:digit:]]\+\(\.[[:digit:]]\+\)\{1,\}"}/{vsn,\1"$(version)"}/' src/$(PROJECT).app.src
+
 release:
 	@rm -fr install
 	@mkdir install
-	@$(REBAR) tar
-	@tar zxf _build/default/rel/payments/payments-$(VER).tar.gz -C install
+	@$(REBAR) release
+	@cd _build/default/rel && tar zcf $(PROJECT)-$(VSN).tgz $(PROJECT)
+	@tar zxf _build/default/rel/$(PROJECT)-$(VSN).tgz -C install
 	@echo "================================================================================"
 	@echo "Project installation is in:   $(PWD)/install"
-	@echo "Deployment system tarball is: _build/default/rel/payments/payments-$(VER).tar.gz"
+	@echo "Deployment system tarball is: _build/default/rel/$(PROJECT)-$(VSN).tgz"
 	@echo "================================================================================"
 
-start: install/bin/payments
-	@APP_ROOT=$(APP_ROOT) install/bin/payments console
+start: install/bin/$(PROJECT)
+	@APP_ROOT=$(APP_ROOT) install/bin/$(PROJECT) console
 
-start-daemon: install/bin/payments
-	@APP_ROOT=$(APP_ROOT) install/bin/payments daemon
+start-daemon: install/bin/$(PROJECT)
+	@APP_ROOT=$(APP_ROOT) install/bin/$(PROJECT) daemon
 
-stop-daemon: install/bin/payments
-	@install/bin/payments eval 'init:stop().' || true
+stop-daemon: install/bin/$(PROJECT)
+	@install/bin/$(PROJECT) eval 'init:stop().' || true
 
 ping:
-	@install/bin/payments ping || true
+	@install/bin/$(PROJECT) ping || true
 
 # Create Github Pages
 gh-pages: VSN=$(shell git describe --always --tags --abbrev=1 | sed 's/^v//')

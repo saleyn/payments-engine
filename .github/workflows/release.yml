@@ -1,0 +1,36 @@
+name: build
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  create-release:
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: erlang:24.0.1
+
+    steps:
+    - uses: actions/checkout@v2
+    #- name: Set up Erlang
+    #  uses: gleam-lang/setup-erlang@v1.1.2
+    #  with:
+    #    # https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_24.0.1-1~ubuntu~focal_amd64.deb
+    #  otp-version: 24.0.1
+    - name: Run tests
+      run: |
+            epmd -daemon
+            make eunit
+    - name: Create a release file
+      run:  make release
+    #- name: Create release archive
+    #    run: tar zcf payments.tar.gz -C _build/default/rel .
+    - name: Create a github release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: _build/default/rel/payments*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
