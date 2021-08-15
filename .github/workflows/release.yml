@@ -31,6 +31,6 @@ jobs:
     - name: Create a github release
       uses: softprops/action-gh-release@v1
       with:
-        files: _build/default/rel/payments*.tar.gz
+        files: _build/default/rel/payments*.tgz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
