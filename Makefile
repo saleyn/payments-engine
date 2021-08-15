@@ -78,7 +78,7 @@ gh-pages:
 	rm -f rebar.lock
 	mv doc/*.* .
 	rm -fr src c_src include Makefile *.*dump priv rebar.* README* _build ebin doc bin etc test .github
-	@FILES=`git st -uall --porcelain | sed -n '/^?? [A-Za-z0-9]/{s/?? //p}'`; \
+	@FILES=`git status -uall --porcelain | sed -n '/^?? [A-Za-z0-9]/{s/?? //p}'`; \
 	for f in $$FILES ; do \
 		echo "Adding $$f"; git add $$f; \
 	done
