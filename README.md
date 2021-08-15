@@ -226,6 +226,15 @@ $ bin/payments-loader.es -a 5
 2021-08-10 19:00:00 |         5 |       100 |    deposit |       5.0000 |       0.0000->5.0000       |       0.0000->0.0000       |       5.0000 | false
 ```
 
+## Making new releases
+
+Github actions were created for updating [github documentaton](https://saleyn.github.io/payments-engine)
+and publishing [new releases](https://github.com/saleyn/payments-engine/releases).
+
+- The documentation is automatically updated every time a git push happens to the master branch.
+- To publish a new release run `make set-version version=X.Y`. This will update the file
+  versions, commit, create a tag, push the tag to git, and publish a new release tarball.
+
 ## Assumptions
 
 - The client has a single asset account. All transactions are to and from this single
