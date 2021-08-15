@@ -32,6 +32,15 @@ set-version:
 	@[ -z $(version) ] && echo "Missing version=X.Y.Z!" && exit 1 || true
 	@sed -i 's/{$(PROJECT),\( \+\)"[[:digit:]]\+\(\.[[:digit:]]\+\)\{1,\}"}/{$(PROJECT),\1"$(version)"}/' rebar.config
 	@sed -i 's/{vsn,\( \+\)"[[:digit:]]\+\(\.[[:digit:]]\+\)\{1,\}"}/{vsn,\1"$(version)"}/' src/$(PROJECT).app.src
+	@if [ "$(VSN)" != $(shell git describe --abbrev=1 --tags) ]; then \
+		echo -en "Make a git tag for version=$(VSN), and commit it to git (Y/n): " && \
+		  read yn && \
+			[ "$${yn,,}" = "y" ] && \
+			git tag $(VSN) && \
+			git push --tags origin master || true; \
+	else \
+		echo "Same version not committed to git!"; \
+  fi
 
 release:
 	@rm -fr install

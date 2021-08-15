@@ -24,3 +24,4 @@ jobs:
             which epmd
             epmd -daemon
             make eunit
+            make gh-pages
