@@ -3,7 +3,7 @@ name: build
 on:
   push:
     tags:
-      - '**'
+      - '*.*'
 
 jobs:
   create-release:
@@ -30,5 +30,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: _build/default/rel/payments*.tgz
+        draft: false
+        name:  ""
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
