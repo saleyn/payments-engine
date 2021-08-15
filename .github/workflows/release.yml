@@ -24,10 +24,8 @@ jobs:
       run: |
             epmd -daemon
             make eunit
-    - name: Create a release file
+    - name: Create a release tarball
       run:  make release
-    #- name: Create release archive
-    #    run: tar zcf payments.tar.gz -C _build/default/rel .
     - name: Create a github release
       uses: softprops/action-gh-release@v1
       with:
