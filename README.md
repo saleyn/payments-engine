@@ -55,9 +55,8 @@ Untar the `*.tar.gz` file to the installation directory, and it's ready to run v
 in the `bin` directory discussed in the following sections.
 
 ```
-$ mkdir payments
+$ tar zxf payments-0.1.tgz
 $ cd payments
-$ tar zxf payments-0.1.tar.gz
 ```
 
 ### Building the project from sources
@@ -67,6 +66,7 @@ The commands below will pull the project and build a release in the `install` di
 ```
 $ git clone https://github.com/saleyn/payments-engine.git
 $ make release
+$ cd install
 ```
 
 ## Project structure
@@ -134,8 +134,8 @@ $ tree /tmp/test/
     └── db                              # Database directory for tables and logs
 ```
 
-For development, two convenience shortcuts are provided in the `Makefile` to
-start the engine's in daemon or interactive mode:
+For development, two convenience shortcuts are provided in the `Makefile` of the
+project's root to start the engine's in daemon or interactive mode:
 ```
 $ make start-daemon   # Starts a daemon
 $ make start          # Starts the engine in interactive mode
@@ -149,9 +149,9 @@ We exit the engine by executing `q().`:
 
 ```
 $ make start
-Exec: /usr/lib/erlang/erts-12.0/bin/erlexec -boot /home/serge/tmp/payments-engine/install/releases/0.1/start -mode embedded -boot_var SYSTEM_LIB_DIR /usr/lib/erlang/lib -config /home/serge/tmp/payments-engine/install/releases/0.1/sys.config -args_file /home/serge/tmp/payments-engine/install/releases/0.1/vm.args -- console
-Root: /home/serge/tmp/payments-engine/install
-/home/serge/tmp/payments-engine/install
+Exec: /usr/lib/erlang/erts-12.0/bin/erlexec -boot .../payments-engine/install/releases/0.1/start -mode embedded -boot_var SYSTEM_LIB_DIR /usr/lib/erlang/lib -config .../payments-engine/install/releases/0.1/sys.config -args_file .../payments-engine/install/releases/0.1/vm.args -- console
+Root: .../payments-engine/install
+.../payments-engine/install
 Erlang/OTP 24 [erts-12.0] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit]
 
 =NOTICE REPORT==== 10-Aug-2021::19:56:23.247180 ===
@@ -166,11 +166,11 @@ Eshell V12.0  (abort with ^G)
 
 From here, we can start the engine as a daemon:
 ```
-$ APP_ROOT=/tmp/test install/bin/payments start
+$ APP_ROOT=/tmp/test bin/payments start
 
 # Verify that it's up:
 
-$ install/bin/payments ping
+$ bin/payments ping
 pong
 ```
 
@@ -186,7 +186,7 @@ deposit,    1,  3, 2.0
 withdrawal, 1,  4, 1.5
 withdrawal, 2,  5, 3.0
 
-$ install/bin/payments-loader.es test/data/transactions.csv
+$ bin/payments-loader.es test/data/transactions.csv
 client,available,held,total,locked
 1,1.5000,0.0000,1.5000,false
 2,-1.0000,0.0000,-1.0000,false
@@ -195,9 +195,9 @@ client,available,held,total,locked
 Note that the script takes two optional arguments for pretty printing and outputing
 the record counts:
 ```
-$ install/bin/payments-loader.es -h
+$ bin/payments-loader.es -h
 Load payment transactions from a file
-Usage: install/bin/payments-loader.es [-p] [-n] [-h|--help] CSVFile
+Usage: bin/payments-loader.es [-p] [-n] [-h|--help] CSVFile
 
 Options:
   -p         - pretty print
@@ -205,7 +205,7 @@ Options:
   -a [CliID] - print audit log (optionally filter by ClientID)
   -h|--help  - print help
 
-$ install/bin/payments-loader.es -p -n test/data/transactions.csv
+$ bin/payments-loader.es -p -n test/data/transactions.csv
 Loaded: 0 records
 
 Client | Available |  Held  |  Total  | Locked
@@ -221,7 +221,7 @@ all of them are duplicates.
 The system maintains an audit trail log of all client asset changes.
 To view that log, execute the `payments-loader.es` with `-a` option:
 ```
-$ install/bin/payments-loader.es -a 5
+$ bin/payments-loader.es -a 5
                Time |  ClientID |   TransID |       Type |       Amount |     OldAvail->NewAvail     |      OldHeld->NewHeld      |     NewTotal |  Lock
 2021-08-10 19:00:00 |         5 |       100 |    deposit |       5.0000 |       0.0000->5.0000       |       0.0000->0.0000       |       5.0000 | false
 ```
