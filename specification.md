@@ -44,13 +44,11 @@ occurred chronologically after a.
 The output should be a list of client IDs ( client ), available amounts ( available ), held amounts ( held
 ), total amounts ( total ), and whether the account is locked ( locked ). Columns are defined as:
 
-| ------ | ----------- |
 | Type   | Description |
 | ------ | ----------- |
 | held   | The total funds that are held for dispute. This should be equal to total - available amounts |
 | total  | The total funds that are available or held. This should be equal to available + held |
 | locked | Whether an account is locked. An account is locked if a chargeback occurs |
-| ------ | ----------- |
 
 For example:
 ```

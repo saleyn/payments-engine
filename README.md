@@ -16,6 +16,8 @@ it needs to be run on the same host.
 A daemon management script `payments` is provided for managing startup/daemonization/attaching
 to the daemon process.
 
+The specification of the payments engine is [defined here](specification.md).
+
 ## Author
 
 - Serge Aleynikov <saleyn(at)gmail.com>
