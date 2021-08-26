@@ -5,14 +5,7 @@ the payments crediting and debiting accounts. After processing the complete set 
 client account balances.
 You should be able to run your payments engine like:
 ```
-<your chosen runtime> -- transactions.csv > accounts.csv
-
-Examples:
-node transactions.js transactions.csv > accounts.csv
-cargo run -- transactions.csv > accounts.csv
-exercise.md 2/1/2021
-
-./your-binary transactions.csv > accounts.csv
+[PayementsProcessor] transactions.csv > accounts.csv
 ```
 
 The input file is the first and only argument to the program. Output should be written to stdout.
