@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module payments</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module payments</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>    Payments engine API for loading transaction files.
+
+<p><b>Authors:</b> Serge Aleynikov (<a href="mailto:saleyn(at)gmail.com"><tt>saleyn(at)gmail.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>    Payments engine API for loading transaction files
+  
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#assets-0">assets/0</a></td><td>Get a list of all client asset records.</td></tr>
+<tr><td valign="top"><a href="#assets-1">assets/1</a></td><td>Get a list of all client assets as <code>#client{}` records or tuples.
+       When `[{compact, Bool}]</code> option is provided, the output is reduced to
+       tuples of arity 5.</td></tr>
+<tr><td valign="top"><a href="#client_asset-1">client_asset/1</a></td><td>Get a client asset.</td></tr>
+<tr><td valign="top"><a href="#format_audit-1">format_audit/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_file-1">parse_file/1</a></td><td>Parse a CSV input file with transactions.</td></tr>
+<tr><td valign="top"><a href="#print_assets-0">print_assets/0</a></td><td>Print assets to stdout.</td></tr>
+<tr><td valign="top"><a href="#print_assets-1">print_assets/1</a></td><td>Print assets to stdout with given options (compact or pretty printing).</td></tr>
+<tr><td valign="top"><a href="#print_assets-2">print_assets/2</a></td><td>Print assets of one client to stdout with given options.</td></tr>
+<tr><td valign="top"><a href="#print_audit-1">print_audit/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#print_audit-2">print_audit/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#process_file-1">process_file/1</a></td><td>Load transactions from file, and return the number of
+       successfully processed and failed records.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="assets-0">assets/0</a></h3>
+<div class="spec">
+<p><tt>assets() -&gt; [#client{}]</tt><br></p>
+<p> </p>
+</div><p>Get a list of all client asset records</p>
+
+<h3 class="function"><a name="assets-1">assets/1</a></h3>
+<div class="spec">
+<p><tt>assets(Options::[{compact, boolean()}]) -&gt; [#client{}] | [{TransID::integer(), Avail::float(), Held::float(), Total::float(), Lock::boolean()}]</tt><br></p>
+<p> </p>
+</div><p>Get a list of all client assets as <code>#client{}` records or tuples.
+       When `[{compact, Bool}]</code> option is provided, the output is reduced to
+       tuples of arity 5.</p>
+
+<h3 class="function"><a name="client_asset-1">client_asset/1</a></h3>
+<div class="spec">
+<p><tt>client_asset(ClientID::integer()) -&gt; #client{} | not_found</tt><br></p>
+<p> </p>
+</div><p>Get a client asset</p>
+
+<h3 class="function"><a name="format_audit-1">format_audit/1</a></h3>
+<div class="spec">
+<p><tt>format_audit(Audit::#audit{}) -&gt; string()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_file-1">parse_file/1</a></h3>
+<div class="spec">
+<p><tt>parse_file(Filename::string()) -&gt; {Transactions::[#transaction{}], BadRows::[{RowNum::integer(), Reason::string()}]}</tt><br></p>
+<p> </p>
+</div><p>Parse a CSV input file with transactions</p>
+
+<h3 class="function"><a name="print_assets-0">print_assets/0</a></h3>
+<div class="spec">
+<p><tt>print_assets() -&gt; any()</tt></p>
+<p> </p>
+</div><p>Print assets to stdout</p>
+
+<h3 class="function"><a name="print_assets-1">print_assets/1</a></h3>
+<div class="spec">
+<p><tt>print_assets(Options) -&gt; any()</tt></p>
+<p> </p>
+</div><p>Print assets to stdout with given options (compact or pretty printing).</p>
+
+<h3 class="function"><a name="print_assets-2">print_assets/2</a></h3>
+<div class="spec">
+<p><tt>print_assets(ClientID::integer() | [{TransID::integer(), Avail::float(), Held::float(), Total::float(), Lock::boolean()}], Options::[{compact, boolean()}]) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p>Print assets of one client to stdout with given options.</p>
+
+<h3 class="function"><a name="print_audit-1">print_audit/1</a></h3>
+<div class="spec">
+<p><tt>print_audit(Audit::[#audit{}]) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="print_audit-2">print_audit/2</a></h3>
+<div class="spec">
+<p><tt>print_audit(Audit::[#audit{}], PrintHeader::boolean()) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="process_file-1">process_file/1</a></h3>
+<div class="spec">
+<p><tt>process_file(Filename::binary() | string()) -&gt; {ok, GoodCount::integer(), BadRecCount::integer()} | {error, string()}</tt><br></p>
+<p> </p>
+</div><p>Load transactions from file, and return the number of
+       successfully processed and failed records.
+       Rejected records could be due to data formatting issues.</p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>
